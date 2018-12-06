@@ -29,12 +29,12 @@ export JAVA_HOME JRE_HOME CLASS_PATH PATH
 ```
 将公钥发送到集群其他节点  
 ### Linux内核部分
-####禁用透明大页面压缩
+#### 禁用透明大页面压缩
 `echo never > /sys/kernel/mm/transparent_hugepage/defrag`  
 `echo never > /sys/kernel/mm/transparent_hugepage/enabled`  
 并将上面的两条命令写入开机自启动  
 `vim /etc/rc.local`  
-####优化交换分区
+#### 优化交换分区
 vim /etc/sysctl.conf  
 vm.swappiness = 10  
 sysctl -p /etc/sysctl.conf  
