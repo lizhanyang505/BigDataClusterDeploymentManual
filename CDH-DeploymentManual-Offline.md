@@ -1,6 +1,6 @@
-#CDH 完全离线安装
-##前置环境准备
-###卸载OPENJDK，安装OracleJDK
+# CDH 完全离线安装
+## 前置环境准备
+### 卸载OPENJDK，安装OracleJDK
 执行`rpm -qa | grep java-1.* | xargs -I {} rpm -e --nodeps {}`  
 下载地址 [jdk-8u191](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)  
 执行`rpm -ivh jdk-8u191-linux-x64.rpm  `  
@@ -13,7 +13,7 @@ PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
 export JAVA_HOME JRE_HOME CLASS_PATH PATH
 ```
 执行`source /etc/profile`使环境变量生效  
-###检查时间是否正确
+### 检查时间是否正确
 `date -s 2018/12/06` 设置年月日  
 `date -s 19:00:00` 设置时分秒  
 `hwclock -w` 将当前时间写入硬件，避免重启失效  
@@ -52,7 +52,7 @@ sysctl -p /etc/sysctl.conf
 `./mysqld --user=mysql --basedir=/opt/mysql --datadir=/opt/mysql/data --initialize`  初始化mysql，要特别注意  
 **[Note] A temporary password is generated for root@localhost: o*s#gqh)F4Ck**  
 最后的就是初始密码
-###修改MySQL配置文件
+### 修改MySQL配置文件
 `vim /opt/mysql/support-files/mysql.server`  
 填写完整basedir,datadir即可  
 `cp /opt/mysql/support-files/mysql.server  /etc/init.d/mysqld`  
