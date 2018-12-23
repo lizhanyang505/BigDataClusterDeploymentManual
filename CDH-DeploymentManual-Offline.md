@@ -78,6 +78,7 @@ gpgkey=file:///mnt/cdrom/RPM-GPG-KEY-CentOS-7
 进入/opt/mysql/bin  
 `./mysqld --user=mysql --basedir=/opt/mysql --datadir=/opt/mysql/data --initialize`  初始化mysql，要特别注意  
 **[Note] A temporary password is generated for root@localhost: o*s#gqh)F4Ck**  
+> 如果是用RPM安装，密码可以去此处查看 grep 'temporary password' /var/log/mysqld.log  
 最后的就是初始密码
 ### 修改MySQL配置文件
 `vim /opt/mysql/support-files/mysql.server`  
