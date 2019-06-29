@@ -46,6 +46,7 @@ sysctl -p /etc/sysctl.conf
 ### 配置本地yum镜像源
 >**由于依赖众多复杂，可以下载CentOS-Everything镜像作为本地的yum镜像源，同时注意，如果你使用的1511的版本，配置的源也要使用1511版本，避免出现一些问题**
 
+如果使用的是阿里云的ECS，则已自动配置好了阿里云内网的yum源  
 下载地址 :[CentOS-7-x86_64-Everything-1804.iso](https://mirrors.aliyun.com/centos/7.5.1804/isos/x86_64/CentOS-7-x86_64-Everything-1804.iso)
 `/mnt/iso` 新建ISO存放目录  
 `/mnt/cdrom` 新建镜像挂载目录  
@@ -69,6 +70,7 @@ gpgkey=file:///mnt/cdrom/RPM-GPG-KEY-CentOS-7
 下载地址：[MySQL](https://dev.mysql.com/downloads/file/?id=481117)  
 `tar -zxvf mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz -C /opt/mysql`解压至指定目录，并将解压后产生的文件移入mysql目录，删除mysql-5.7.24-linux-glibc2.12-x86_64目录，在mysql目录下新建data目录用于存放数据文件
 ### 新建mysql用户组和mysql用户
+如果是打算使用单用户安装CDH，也可不必建立该用户  
 `groupadd mysql` 新建用户组  
 `useradd -r -g mysql mysql`  新建用户，`-r` 新建系统用户 `-g `指定组  
 `chown -R mysql:mysql /opt/mysql`  
@@ -192,34 +194,35 @@ cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar
 ### 创建必要的数据库
 ```sql
 create database scm default character set utf8 default collate utf8_general_ci;
-grant all on scm.* to 'scm'@'%' identified by 'root';
+grant all on scm.* to 'root'@'%' identified by 'root';
 create database amon default character set utf8 default collate utf8_general_ci;
-grant all on amon.* to 'amon'@'%' identified by 'root';
+grant all on amon.* to 'root'@'%' identified by 'root';
 create database rman default character set utf8 default collate utf8_general_ci;
-grant all on rman.* to 'rman'@'%' identified by 'root';
+grant all on rman.* to 'root'@'%' identified by 'root';
 create database hue default character set utf8 default collate utf8_general_ci;
-grant all on hue.* to 'hue'@'%' identified by 'root';
+grant all on hue.* to 'root'@'%' identified by 'root';
 create database metastore default character set utf8 default collate utf8_general_ci;
-grant all on metastore.* to 'hive'@'%' identified by 'root';
+grant all on metastore.* to 'root'@'%' identified by 'root';
 create database sentry default character set utf8 default collate utf8_general_ci;
-grant all on sentry.* to 'sentry'@'%' identified by 'root';
+grant all on sentry.* to 'root'@'%' identified by 'root';
 create database nav default character set utf8 default collate utf8_general_ci;
-grant all on nav.* to 'nav'@'%' identified by 'root';
+grant all on nav.* to 'root'@'%' identified by 'root';
 create database oozie default character set utf8 default collate utf8_general_ci;
-grant all on oozie.* to 'oozie'@'%' identified by 'root';
+grant all on oozie.* to 'root'@'%' identified by 'root';
 flush privileges;
 ```
 将上面的语句存成create-db.sql，放在opt目录下，登录mysql  
 `source /opt/create-db.sql` 执行即可  
 ## 安装Cloudera Manager
 `mkdir /opt/cloudera` 新建目录  
-使用rpm -ivh进行安装，安装顺序：`daemon -> server -> server-db -> agent `  
+使用`yum localinstall cloudera-*`进行安装，执行该命令前，相关的RPM包需要在当前目录下
 安装server-db的时候，会提示需要postgresql-server这个依赖`yum install -y postgresql-server`,使用之前配置的镜像源安装即可  
 安装agent的时候会提示缺少较多的依赖，此处一并给出，方便执行  
-`yum install -y libxslt cyrus-sasl-gssapi fuse portmap fuse-libs lsb httpd mod_ssl openssl_devel python-psycopg2 MySQL-python`  
+`yum install -y libxslt cyrus-sasl-gssapi fuse portmap fuse-libs lsb httpd mod_ssl openssl-devel python-psycopg2 MySQL-python`  
 如果有依赖yum找不到，可以去/mnt/cdrom/Package/目录下寻找  
   
 给相关目录赋权 	
+在一般情况下这些目录会自动建立，并且权限已是配好的
 `chown cloudera-scm:cloudera-scm /opt/cloudera/ -R`  
 `chown cloudera-scm:cloudera-scm /var/log/cloudera-scm-agent -R`  
 `chgrp cloudera-scm /opt/cloudera/ -R`  
@@ -242,5 +245,4 @@ flush privileges;
   
 ### the last packet sent successfully to the server was 0 milliseconds ago
 数据库地址的问题，可以手动修改db.properties中的数据库连接信息。
-### 一些Hbase，yarn,无法启动
-有可能是没有HDFS的写入权限
+
